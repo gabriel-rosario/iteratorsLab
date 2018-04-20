@@ -13,8 +13,8 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
 	private static class DNode<E> implements Position<E> { 
 		private E element; 
 		private DNode<E> prev, next;
-		private LinkedPositionalList<E> list;
-		
+
+		private PositionalList<E> list;
 		public E getElement() {
 			return element;
 		}
@@ -48,10 +48,10 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
 			element = null; 
 			prev = next = null; 
 		}
-		public void setList(LinkedPositionalList<E> list){
+		public void setList(PositionalList<E> list){
 			this.list = list;
 		}
-		public LinkedPositionalList<E> getList(){
+		public PositionalList<E> getList(){
 			return list;
 		}
 	}
@@ -73,10 +73,8 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
 	private DNode<E> validate(Position<E> p) throws IllegalArgumentException { 
 		try { 
 			DNode<E> dp = (DNode<E>) p; 
-			if (dp.getPrev() == null || dp.getNext() == null) 
+			if (dp.getPrev() == null || dp.getNext() == null || dp.getList()!=this) 
 				throw new IllegalArgumentException("Invalid internal node."); 
-			if(this != dp.getList())
-				throw new IllegalArgumentException("Element Not in the List");
 			return dp; 
 		} catch (ClassCastException e) { 
 			throw new IllegalArgumentException("Invalid position type."); 
@@ -91,6 +89,7 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
 	
 	private DNode<E> addBetween(DNode<E> b, DNode<E> a, E e) { 
 		DNode<E> n = new DNode<>(e, b, a); 
+		n.setList(this);
 		b.setNext(n); 
 		a.setPrev(n); 
 		size++; 
